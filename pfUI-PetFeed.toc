@@ -1,8 +1,8 @@
 ## Interface: 11200
 ## Title: |cff33ffccpf|cffffffffUI |cffcccccc- PetFeed
 ## Author: Duciel
-## Notes: Shows a pfUI-styled button while your pet is below max loyalty; click to feed matching food from your bags.
-## Version: 1.0
+## Notes: Shows a pfUI-styled button while your pet is not fully happy; click to feed matching food from your bags.
+## Version: 1.1
 ## Dependencies: pfUI
 
 foods.lua

@@ -1,8 +1,8 @@
--- pfUI-PetFeed: shows a button while your pet is below max loyalty.
+-- pfUI-PetFeed: shows a button while your pet is not fully happy (fed).
 -- Clicking it feeds the pet with matching food from your bags.
 
 pfUI:RegisterModule("petfeed", "vanilla", function()
-  local MAX_LOYALTY = 6
+  local MAX_HAPPINESS = 3
   local FEED_ICON = "Interface\\Icons\\Ability_Hunter_BeastTraining"
 
   -- localized GetPetFoodTypes() names -> internal diet keys
@@ -19,13 +19,7 @@ pfUI:RegisterModule("petfeed", "vanilla", function()
   }
 
   local happiness = { "|cffff3333Unhappy|r", "|cffffff33Content|r", "|cff33ff33Happy|r" }
-
-  local function GetLoyaltyLevel()
-    local loyalty = GetPetLoyalty()
-    if not loyalty then return nil end
-    local _, _, level = string.find(loyalty, "(%d+)")
-    return tonumber(level)
-  end
+  local colors = { { 1, .3, .3 }, { 1, 1, .3 } }
 
   local function PetIsEating()
     for i = 1, 16 do
@@ -101,8 +95,8 @@ pfUI:RegisterModule("petfeed", "vanilla", function()
       return
     end
 
-    local level = UnitExists("pet") and not UnitIsDead("pet") and GetLoyaltyLevel()
-    if not level or level >= MAX_LOYALTY or PetIsEating() then
+    local level = UnitExists("pet") and not UnitIsDead("pet") and GetPetHappiness()
+    if not level or level >= MAX_HAPPINESS or PetIsEating() then
       button:Hide()
       return
     end
@@ -114,7 +108,11 @@ pfUI:RegisterModule("petfeed", "vanilla", function()
     end
 
     button.bag, button.slot, button.link = bag, slot, link
-    button.text:SetText(level)
+    -- tint the button by mood: red = unhappy, yellow = content
+    button.text:SetText("")
+    if button.backdrop and colors[level] then
+      button.backdrop:SetBackdropBorderColor(colors[level][1], colors[level][2], colors[level][3], 1)
+    end
     button:Show()
   end
 
@@ -158,7 +156,7 @@ pfUI:RegisterModule("petfeed", "vanilla", function()
     Update()
   end)
 
-  -- loyalty has no dedicated event, so re-check every few seconds
+  -- safety net in case an event is missed, re-check every few seconds
   local elapsed = 0
   events:SetScript("OnUpdate", function()
     elapsed = elapsed + arg1
