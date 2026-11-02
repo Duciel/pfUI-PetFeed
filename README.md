@@ -7,5 +7,6 @@ A small pfUI third-party addon for hunters (WoW 1.12 / OctoWoW).
 - Click to feed. Plain food is used before "Well Fed" buff food, smallest stack first.
 - Hidden while the pet is already eating, dead, or missing.
 - Move it with pfUI's `/unlock` (frame `pfPetFeedButton`).
+- Resize it in `/pfui` > Thirdparty > Pet Feed > Button Size (12-128, default 36).
 
 Food IDs come from Gazmik Fizzwidget's Feed-O-Matic database (vanilla items only; server-custom foods aren't listed).

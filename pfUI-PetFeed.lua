@@ -66,9 +66,10 @@ pfUI:RegisterModule("petfeed", "vanilla", function()
     if best then return best[1], best[2], best[3] end
   end
 
+  -- default settings (only written when missing)
+  pfUI:UpdateConfig("petfeed", nil, "size", "36")
+
   local button = CreateFrame("Button", "pfPetFeedButton", UIParent)
-  button:SetWidth(36)
-  button:SetHeight(36)
   button:SetPoint("CENTER", UIParent, "CENTER", 0, -150)
   button:SetFrameStrata("MEDIUM")
   button:RegisterForClicks("LeftButtonUp")
@@ -87,6 +88,21 @@ pfUI:RegisterModule("petfeed", "vanilla", function()
   button:SetHighlightTexture("Interface\\Buttons\\ButtonHilight-Square")
   button:GetHighlightTexture():SetBlendMode("ADD")
   button:Hide()
+
+  local function ApplySize()
+    local size = tonumber(C.petfeed.size) or 36
+    if size < 12 then size = 12 elseif size > 128 then size = 128 end
+    button:SetWidth(size)
+    button:SetHeight(size)
+  end
+  ApplySize()
+
+  -- settings page: pfUI config (/pfui) > Thirdparty > Pet Feed
+  if pfUI.gui and pfUI.gui.CreateGUIEntry then
+    pfUI.gui.CreateGUIEntry(T["Thirdparty"], "Pet Feed", function()
+      pfUI.gui.CreateConfig(ApplySize, "Button Size", C.petfeed, "size", "text", nil, nil, nil, "number")
+    end)
+  end
 
   local function Update()
     -- keep the button visible while pfUI's unlock mode is active
